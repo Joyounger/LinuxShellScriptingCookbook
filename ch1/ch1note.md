@@ -116,7 +116,47 @@ cat <&3
 如果需要再次读取,不能继续使用文件描述符3了.而是需要使用exec重新分配文件描述符3来进行二次读取.
 
 
-######1.7 
+######1.7 数组和关联数组
+bash从4.0版本之后才开始支持关联数组
+以清单形式打印出数组中的所有值:
+echo ${array_var[*]}
+echo ${array_var[@]}
+打印数组长度
+echo ${#array_var[*]}
+
+定义关联数组
+声明:declare -A ass_array, 声明之后有两种方法将元素添加到关联数组:
+ass_array=([index1]=val1 [index2]=val2)
+使用独立的"索引-值"进行赋值:
+ass_array[index1]=val1
+ass_array[index2]=val2
+echo "Apple costs ${fruits_value[apple]}"
+列出数组索引:echo ${!array_var[*]} 或者echo ${!array_var[@]}
+
+###### 1.8 对别名进行转义
+可以将希望使用的命令进行转义,从而忽略当前定义的别名.
+\command
+字符\对命令实施转义,是我们可以执行原本的命令,而不是这些命令的别名替身.在不可信环境下执行特权命令,通过在命令前加上\来忽略可能存在的别名设置总是一个不错的安全实践.
+
+######1.9 获取终端信息
+tput和stty是两款终端处理工具
+获取终端的行数和列数
+tput cols 列数
+tupt lines 行数
+打印出当前的终端名 tput longname
+将光标移动到坐标(100, 100)处:tput cup 100 100
+设置终端背景色:
+
+
+
+
+
+
+
+
+
+
+
 
 
 

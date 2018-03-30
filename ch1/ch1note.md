@@ -145,22 +145,77 @@ tput cols 列数
 tupt lines 行数
 打印出当前的终端名 tput longname
 将光标移动到坐标(100, 100)处:tput cup 100 100
-设置终端背景色:
+设置终端背景色:tput setb n n取值在0到7之间
+设置文本前景色:tput setf n n取值在0到7之间
+设置文本样式为粗体tput hold
+设置下划线的起止tput smul,tput rmul
+删除从当前光标位置到行尾的所有内容:tput ed
+输入密码时不显示输入内容
+```bash
+#!/bin/sh
+#Filename: password.sh
+echo -e "enter password: "
+stty -echo  #选项-echo禁止将输出发送到终端,而选项echo允许
+read password
+stty echo
+echo
+echo Password read.
+```
 
+######1.10 日期时间
+检查一组命令所花费的时间  
+```bash
+#!/bin/bash
+# time_take.sh
+start=$(date +%s)
+commands;
+statements
+end=$(date +%s)
+difference=$((end - start))
+```
+另一种方法是使用time <scriptpath>来得到执行脚本所花费的时间
 
+在脚本中生成延时:
+为了在脚本中推迟执行一段时间,可以使用sleep $sleep no_of_seconds.例如:
+```bash
+#!/bin/bash
+# sleep.sh
+echo -n count:
+tput sc
+count=0;
+while true;
+do
+  if [ $count -lt 40 ]; then
+    let count++;
+    sleep 1;
+    tput rc # 存储光标位置
+    tput ed 
+    echo -n $count;
+  else exit 0;
+  fi
+done
+```
 
+######1.11 debug
+在脚本中可以设置set -x和set +x,来对两者之间的部分语句调试
 
+_DEBUG环境变量
+```bash
+function DEBUG()
+{
+  [ "$_DEBUG" == "on" ] && $@ || :
+}
 
+for i in {1..10}
+do
+  DEBUG echo $i
+done
 
+执行时:
+_DEBUG=on ./script.sh
+如果没有把_DEBUG=on传递给脚本,那么调试信息就不会打印出来.bash中命令":"告诉shell不进行任何操作
 
-
-
-
-
-
-
-
-
+还可以把shebang给为#!/bin/bash -xv
 
 
 

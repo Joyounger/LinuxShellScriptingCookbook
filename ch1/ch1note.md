@@ -217,6 +217,67 @@ _DEBUG=on ./script.sh
 
 还可以把shebang给为#!/bin/bash -xv
 
+###### 1.12 函数和参数
+fork炸弹:
+:(){ :|:& };:
+此函数递归调用自身,不断生成新进程:https://en.wikipedia.org/wiki/Fork_bomb
+可修改/etc/security/limits.conf来限制可生成的最大进程数来避开
+导出函数:函数也能像环境变量一样用export导出,这样函数的作用域就可以扩展到子进程中.
+
+###### 1.13 将命令序列的输出读入变量
+利用子shell生成一个独立的进程:
+可以使用()操作符来定义一个子shell:
+pwd;
+(cd /bin; ls);
+pwd;
+子shell本身就是独立的进程,不会对当前shell有任何影响;所有的改变仅限于子shell内.例如,当用cd命令改变子shell的当前目录时,这种变化不会反映到注shell环境中.
+2 通过引用子shell的方式保留空格和换行符
+假设我们使用子shell或反引用的方法将命令的输出读入一个变量中,可以将它放入双引号中,以保留空格和换行符(\n).例如:
+$ cat text.txt
+1
+2
+3
+$ out=$(cat text.txt)
+$ echo $out
+1 2 3 # lost \n spacing
+$ out="$(cat text.txt)"
+$ echo $out
+1
+2
+3
+
+###### 1.15 运行命令直至执行成功
+按照以下方式定义函数
+function repeat()
+{
+  while true
+  do
+    $@ && return
+  done
+}
+1 一种更快的做法:大多数现代系统中,true是作为/bin中的一个二进制文件来实现的.这就意味着每执行一次while循环,shell就不得不生成一个进程.可以使用shell内建的":"命令,它总是返回为0的退出码
+function repeat () { while :; do $@ && return; done }
+2 增加延时:
+function repeat () { while :; do $@ && return; sleep 30; done }
+
+###### 1.16 字段分隔符和迭代器
+定界符(delimiter):把单个数据流划分成不同数据元素
+内部字段分隔符(Internal Field Separator, IFS):存储定界符的环境变量,它是当前shell环境中使用的默认定界字符串.默认值为空白字符(换行符,制表符或者空格)
+data="name,sex,rollno,location"
+oldIFS=$IFS
+IFS=,
+for item in $data:
+do
+  echo Item:$item
+done
+输出为:
+Item:name
+Item:sex
+Item:rollon
+Item:location
+
+
+
 
 
 

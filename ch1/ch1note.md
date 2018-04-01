@@ -263,6 +263,7 @@ function repeat () { while :; do $@ && return; sleep 30; done }
 ###### 1.16 字段分隔符和迭代器
 定界符(delimiter):把单个数据流划分成不同数据元素
 内部字段分隔符(Internal Field Separator, IFS):存储定界符的环境变量,它是当前shell环境中使用的默认定界字符串.默认值为空白字符(换行符,制表符或者空格)
+```bash
 data="name,sex,rollno,location"
 oldIFS=$IFS
 IFS=,
@@ -275,7 +276,29 @@ Item:name
 Item:sex
 Item:rollon
 Item:location
+```
 
+for var in list:
+do
+  commands;
+done
+list可以是一个序列,生成序列的方法:
+echo {1..50}
+echo {a..z}
+for循环也可以采用C中for循环的格式:
+```bash
+for ((i=0;i<10;i++))
+{
+  cmd;
+}
+```
+
+######1.7 比较与测试
+可以用逻辑运算符简化if的判断条件:
+[ condition ] && action; #如果condition为真则执行action
+[ condition ] || action; #如果condition为加则执行action
+检查字符串比较时,最好用双中括号
+[[ $str1 = $str2 ]]或者[[ $str1 == $str2 ]]
 
 
 

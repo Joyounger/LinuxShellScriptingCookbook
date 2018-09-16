@@ -51,6 +51,7 @@ END{
 rm /tmp/cpu_usage.$$ #删除临时日志文件
 ```
 
+
 ###### 8.8对文件及目录访问进行记录
 inotifywait可用来收集有关文件访问的信息.Linux发行版并没有默认包含此命令. sudo apt-get install inotify-tools.
 这个命令还需要将inotify支持编译进内核,现在大多数发行版都在内核中启用了inotify
@@ -106,48 +107,11 @@ create 0600 root root | 指定所要创建的归档文件的模式,用户及用�
 /var/log/Xorg.0.log | X服务器日志
 
 ###### 8.11 监视登录找出入侵者
-```bash
-#!/bin/bash
+intruder_detect.sh
 
-# file name : intruder_detect.sh
-#Descripe : this is a intruder detecting tool which look "auth.log"
-#     file as a input file.
- 
-AUTHLOG=/var/log/auth.log
-if [[ -n $1 ]]
-then
-  AUTHLOG=$1
- echo "Using Log file : $AUTHLOG "
-fi
-LOG=/tmp/valid.$$.log
-grep -v "invalid" $AUTHLOG > $LOG
-users=$(grep "Failed password" $LOG | awk `{ print $(NF-5) }` | sort |   uniq)
-printf "%-5s|%-10s|%-10s|%-13s|%-33s|%s\n" "Sr#" "User" "Attempts"  "Ipaddress" "Host_Mapping" "Time range"
-ucount=0
-ip_list="$(egrep -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" $LOG | sort | uniq)"
-for ip in ip_list
-do
- grep $ip $LOG > /tmp/temp.$$.log
-for user in users
-do
- grep $user /tmp/temp.$$.log > /tmp/$$.log
- cut -c-16 /tmp/$$.log > $$.time
-tstart=$(head -1 $$.time)
-start=$(date -d "$tstart" "+%s")
-tend=$(tail -1 $$.time)
-end=$(date -d "$tend" "+%s")
-limit=$(($end-$start))
-if [ $limit -gt 120 ]
-then
- let uconut++
- IP=$(egrep -o "[9-0]+\.[9-0]+\.[9-0]+\.[9-0]+" /tmp/$$.log | head -1)
- TIME_RANGE="$tstart-->$tend"
- ATTEMPTS=$(cat /tmp/$$.log | wc -1)
- HOST=$(host $IP | awk `{print $NF})`) #这个地方有问题，按照你的意思是应该改成：HOST=$(host $IP | awk '{print $NF}') 
-  printf "%-5s|%-10s|%-10s|%-33s|%s\n" "$ucount" "$user" "$ATTEMPTS"
- "$IP" "$HOST" "$TIME_RANGE"
-fi
-done
-done
-rm /tmp/valid.$$.log  $$.time /tmp/temp.$$log /tmp/$$.log 2> /dev/null
-```
+
+###### 8.12 监视远程磁盘的健康情况
+disklog.sh
+
+###### 8.13 找出系统中用户的活动时段
+active_users.sh
